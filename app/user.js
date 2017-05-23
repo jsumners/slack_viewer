@@ -1,26 +1,21 @@
-var fs = require('fs');
-var User = function() {
+'use strict'
 
-  users = function() {
-    return JSON.parse(fs.readFileSync('./data/users.json'));
-  }(),
-
-  getRealName = function(slackHandle) {
-    return users.find(function(user) {
-      return user.id == slackHandle;
-    })['name'];
+const fs = require('fs')
+const usersData = require('./data/users.json')
+module.exports = {
+  get (slackHandle) {
+    return usersData.find((user) => user.id === slackHandle)
   },
 
-  getAvatar = function(slackHandle) {
-    return users.find(function(user) {
-      return user.id == slackHandle;
-    })['profile']['image_48'];
-  }
+  getRealName (slackHandle) {
+    const user = this.get(slackHandle)
+    if (user) return user.name
+    return null
+  },
 
-  return {
-    getRealName: getRealName,
-    getAvatar: getAvatar
+  getAvatar (slackHandle) {
+    const user = this.get(slackHandle)
+    if (user) return user.profile.image_48 // should check for property existence
+    return null
   }
 }
-
-module.exports = new User();
